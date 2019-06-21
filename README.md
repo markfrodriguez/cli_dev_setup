@@ -10,7 +10,22 @@ If not already installed, run `sudo apt-get install tmux`. The configuration fil
 When playing with the `.tmux.conf` file, either detach from and then reattach to tmux or run `tmux source-file ~/.tmux.conf`.
 
 ## nvim
-If not already installed, run `sudo apt-get install neovim`. The configuration file for neovim lives at `~/.config/nvim/init.vim`.
+A version > 0.3.x of Neovim is required for this setup (a requirement of Deoplete plugin). If an older version of neovim is already installed, remove it with the following commands:
+
+```
+sudo apt-get --purge remove neovim
+sudo apt autoremove
+```
+
+To install the latest stable version of neovim, execute the commands below:
+
+```
+sudo add-apt-repository ppa:neovim-ppa/stable
+sudo apt-get update
+sudo apt-get install neovim
+```
+
+The configuration file for neovim lives at `~/.config/nvim/init.vim`.
 
 Let's make sure we ALWAYS use neovim and not vim by creating the following aliases.
 
@@ -19,8 +34,7 @@ alias vim='nvim'
 alias vimdiff='nvim -d'
 ```
 
-*My preference is for any custom aliases to be in `~/.bash_aliases`, but they could also go in `~/.bashrc` if that's your prerogative.*
-
+*My preference is for any custom aliases to be in `~/.bash_aliases`, but they could also go in `~/.bashrc` if that's your preference.*
 
 Some basic commands to manage plugins:
 
@@ -44,6 +58,9 @@ Below is a snippet from the vim configuration file listing all the installed plu
 ```
 " {{{ VIM Plugins -------------------------------------------------------------
   call plug#begin('~/.local/share/nvim/plugged')
+    " vim Dracula color theme
+    Plug 'dracula/vim'
+    
     " Directory browser
     Plug 'scrooloose/nerdtree'
     
@@ -70,7 +87,7 @@ Below is a snippet from the vim configuration file listing all the installed plu
     Plug 'neomake/neomake'
     
     " Code completion
-    "Plug 'Shougo/deoplete.nvim'
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     
     " TOML support
     Plug 'cespare/vim-toml'
@@ -78,9 +95,22 @@ Below is a snippet from the vim configuration file listing all the installed plu
     " Rust support
     Plug 'rust-lang/rust.vim'
     
-  " -------- put all plugins before this line --------
+    " Language Client
+    Plug 'autozimu/LanguageClient-neovim', {
+       \ 'branch': 'next',
+       \ 'do': 'bash install.sh',
+       \ }
+    
+  " >>>>>>>> put all plugins before this line <<<<<<<<
   call plug#end()
 " }}}
 ```
 
 *All the plugins are "installed" by executing `:PlugInstall` within neovim.*
+
+*Deoplete and LanguageClient use remote plugins so install using the command below.*
+
+```
+nvim +PlugInstall +UpdateRemotePlugins +qa
+```
+`

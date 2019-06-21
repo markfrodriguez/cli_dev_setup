@@ -4,6 +4,9 @@
 
 " {{{ VIM Plugins -------------------------------------------------------------
   call plug#begin('~/.local/share/nvim/plugged')
+    " vim Dracula color theme
+    Plug 'dracula/vim'
+    
     " Directory browser
     Plug 'scrooloose/nerdtree'
     
@@ -30,7 +33,7 @@
     Plug 'neomake/neomake'
     
     " Code completion
-    "Plug 'Shougo/deoplete.nvim'
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     
     " TOML support
     Plug 'cespare/vim-toml'
@@ -38,7 +41,13 @@
     " Rust support
     Plug 'rust-lang/rust.vim'
     
-  " -------- put all plugins before this line --------
+    " Language Client
+    Plug 'autozimu/LanguageClient-neovim', {
+       \ 'branch': 'next',
+       \ 'do': 'bash install.sh',
+       \ }
+    
+  " >>>>>>>> put all plugins before this line <<<<<<<<
   call plug#end()
 " }}}
 
@@ -54,6 +63,9 @@
   " {{{ Visual
     " fix backspace indent
     set backspace=indent,eol,start
+    
+    " set color theme
+    color dracula
     
     " enable syntax processing
     syntax enable
@@ -201,6 +213,112 @@
     autocmd FileType rust setlocal colorcolumn=99
   augroup END
 " }}}
+    
+" {{{ Plugin Settings ---------------------------------------------------------
+  " {{{ NERDTree :help NERDTree.txt
+    " show .files by default
+    let NERDTreeShowHidden=1
+    
+    " close vim if only window left open is a NERDTree
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+  " }}}
+
+  " {{{ Airline :help airline
+    " let laststatus show at all times
+    set laststatus=2
+    
+    " display all buffers when there's only one tab open
+    let g:airline#extensions#tabline#enabled = 1
+    
+    " enable syntastic integration
+    let g:airline#extensions#syntastic#enabled = 1
+    
+    " enable dracula color theme
+    let g:airline_theme = 'dracula'
+  " }}}
+  
+  " {{{ Git Gutter
+    " Symbols to show in gutter
+    let g:gitgutter_sign_added = '+'
+    let g:gitgutter_sign_modified = '>'
+    let g:gitgutter_sign_removed = '-'
+    let g:gitgutter_sign_removed_first_line = '^'
+    let g:gitgutter_sign_modified_removed = '<'
+  " }}}
+
+  " {{{ Syntastic :help syntastic
+    " Recommended settings
+    set statusline+=%#warningmsg#
+    set statusline+=%{SyntasticStatuslineFlag()}
+    set statusline+=%*
+
+    let g:syntastic_always_populate_loc_list = 1
+    let g:syntastic_auto_loc_list = 1
+    let g:syntastic_check_on_open = 1
+    let g:syntastic_check_on_wq = 0
+  
+    " make the error list a little shorter
+    let g:syntastic_loc_list_height = 5
+  " }}}
+  
+  " {{{ Tagbar :help tagbar
+    " autofocus on tagbar on open
+    let g:tagbar_autofocus = 1
+    
+    " Rust specific settings for tags
+    let g:tagbar_type_rust = {
+        \ 'ctagstype' : 'rust',
+        \ 'kinds' : [
+        \'T:types,type definitions',
+        \'f:functions,function definitions',
+        \'g:enum,enumeration names',
+        \'s:structure names',
+        \'m:modules,module names',
+        \'c:consts,static constants',
+        \'t:traits',
+        \'i:impls,trait implementations',
+        \]
+        \}
+  " }}}
+  
+  " {{{ Neomake :help neomake.txt
+    " open location list automatically
+    let g:neomake_open_list = 2
+  " }}}
+  
+  " {{{ Deoplete :help deoplete-options
+    " auto start
+    let g:deoplete#enable_at_startup = 1
+  " }}}
+  
+  " {{{ Rust : help rust
+    " set filetype
+    autocmd BufReadPost *.rs setlocal filetype=rust
+    
+    " auto format code on bufwrite
+    let g:rustfmt_autosave = 1
+
+    " fail silently if unable to format
+    let g:rustfmt_fail_silently = 1
+  " }}}
+  
+  " {{{ Language Client :help LanguageClient
+    " set server commands
+    let g:LanguageClient_serverCommands = {
+        \ 'rust': ['rls'],
+        \ 'python': ['/usr/local/bin/pyls'],
+        \ }
+
+    " automatically start language servers.
+    let g:LanguageClient_autoStart = 1
+    
+    " handle diagnostic messages
+    let g:LanguageClient_diagnosticsEnable=1
+    
+    " use vim's formatting operator |gq|
+    set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
+  " }}}
+" }}}
 
 " {{{ Custom Leader Shortcuts -------------------------------------------------
   " Map leader to ,
@@ -231,6 +349,37 @@
 
   " toggle tagbar
   nnoremap <leader>tt :TagbarToggle<CR>
+  
+  " LanguageClient context menu
+  nnoremap <leader>lm :call LanguageClient_contextMenu()<CR>
+  
+  " show type info (and short doc) of identifier under cursor
+  nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <leader>lh :call LanguageClient#textDocument_hover()<CR>
+  
+  " goto definition under cursor
+  nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
+  
+  " rename identifier under cursor
+  nnoremap <leader>lr :call LanguageClient#textDocument_rename()<CR>
+  
+  " format current document
+  nnoremap <leader>lf :call LanguageClient#textDocument_formatting()<CR>
+  
+  " goto type definition under cursor
+  nnoremap <leader>lt :call LanguageClient#textDocument_typeDefinition()<CR>
+  
+  " list all references of identifier under cursor
+  nnoremap <leader>lx :call LanguageClient#textDocument_references()<CR>
+  
+  " apply a workspace edit
+  nnoremap <leader>la :call LanguageClient_workspace_applyEdit()<CR>
+  
+  " get a list of completion items at current editing location
+  nnoremap <leader>lc :call LanguageClient#textDocument_completion()<CR>
+  
+  " list of current buffer's symbols
+  nnoremap <leader>ls :call LanguageClient_textDocument_documentSymbol()<CR>
 " }}}
 
 " {{{ Custom Functions --------------------------------------------------------
@@ -247,66 +396,4 @@
     call cursor(l, c)
   endfunction
 " }}}
-    
-" {{{ Plugin Settings ---------------------------------------------------------
-  " {{{ NERDTree
-    " show .files by default
-    let NERDTreeShowHidden=1
-  " }}}
 
-  " {{{ Airline
-    " let laststatus show at all times
-    set laststatus=2
-    
-    " display all buffers when there's only one tab open
-    let g:airline#extensions#tabline#enabled = 1
-    
-    " enable syntastic integration
-    let g:airline#extensions#syntastic#enabled = 1
-    
-    " enable dark mode
-    let g:airline_theme = 'dark'
-  " }}}
-  
-  " {{{ Git Gutter
-    " Symbols to show in gutter
-    let g:gitgutter_sign_added = '+'
-    let g:gitgutter_sign_modified = '>'
-    let g:gitgutter_sign_removed = '-'
-    let g:gitgutter_sign_removed_first_line = '^'
-    let g:gitgutter_sign_modified_removed = '<'
-  " }}}
-
-  " {{{ Syntastic
-    " Recommended settings
-    set statusline+=%#warningmsg#
-    set statusline+=%{SyntasticStatuslineFlag()}
-    set statusline+=%*
-
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 0
-  
-    " make the error list a little shorter
-    let g:syntastic_loc_list_height = 5
-  " }}}
-  
-  " {{{ Tagbar
-    " autofocus on tagbar on open
-    let g:tagbar_autofocus = 1
-  " }}}
-  
-  " {{{ Neomake
-    " open location list automatically
-    let g:neomake_open_list = 2
-  " }}}
-  
-  " {{{ Rust
-    " auto format code on bufwrite
-    let g:rustfmt_autosave = 1
-
-    " fail silently if cant format
-    let g:rustfmt_fail_silently = 1
-  " }}}
-" }}}
