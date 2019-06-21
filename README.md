@@ -21,12 +21,6 @@ alias vimdiff='nvim -d'
 
 *My preference is for any custom aliases to be in `~/.bash_aliases`, but they could also go in `~/.bashrc` if that's your prerogative.*
 
-The setup involves several plugins so [vim-plug](https://github.com/junegunn/vim-plug) is employed to handle and manage them. To install vim-plug, run the following command:
-
-```
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
 
 Some basic commands to manage plugins:
 
@@ -35,3 +29,58 @@ Some basic commands to manage plugins:
 * Remove plugins: `:PlugClean` (First, comment the plugin install command in init.vim. Open Nvim and use :PlugClean to uninstall plugins)
 * Check the plugin status: `:PlugStatus`
 * Upgrade vim-plug itself: `:PlugUpgrade`
+
+## Plugins
+The setup involves several plugins to produce the best Rust development environment possible so [vim-plug](https://github.com/junegunn/vim-plug) is employed to handle and manage them. To install vim-plug, run the following command:
+
+```
+curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+The [tagbar](https://github.com/majutsushi/tagbar) pluggin depends on Ctags, which can be installed by running `sudo apt install exuberant-ctags`.
+
+Below is a snippet from the vim configuration file listing all the installed plugins.
+
+```
+" {{{ VIM Plugins -------------------------------------------------------------
+  call plug#begin('~/.local/share/nvim/plugged')
+    " Directory browser
+    Plug 'scrooloose/nerdtree'
+    
+    " Status / tabline
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    
+    " remove buffers without closing splits
+    Plug 'qpkorr/vim-bufkill'
+    
+    " Git Gutter
+    Plug 'airblade/vim-gitgutter'
+    
+    " Fugitive for awesome git stuff
+    Plug 'tpope/vim-fugitive'
+    
+    " Syntax checker for all sorts of languages
+    Plug 'scrooloose/syntastic'
+    
+    " tagbar
+    Plug 'majutsushi/tagbar'
+    
+    " Run programs asynchronously
+    Plug 'neomake/neomake'
+    
+    " Code completion
+    "Plug 'Shougo/deoplete.nvim'
+    
+    " TOML support
+    Plug 'cespare/vim-toml'
+    
+    " Rust support
+    Plug 'rust-lang/rust.vim'
+    
+  " -------- put all plugins before this line --------
+  call plug#end()
+" }}}
+```
+
+*All the plugins are "installed" by executing `:PlugInstall` within neovim.*
