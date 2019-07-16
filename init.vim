@@ -29,6 +29,9 @@
     " tagbar
     Plug 'majutsushi/tagbar'
     
+    " auto close brackets
+    Plug 'cohama/lexima.vim'
+    
     " Run programs asynchronously
     Plug 'neomake/neomake'
     
@@ -279,6 +282,15 @@
         \'i:impls,trait implementations',
         \]
         \}
+  " }}}
+  
+  " {{{ Lexima
+    " basic rules
+    let g:lexima_enable_basic_rules = 1
+    " new line rules
+    let g:lexima_enable_newline_rules = 1
+    " endwise rules
+    let g:lexima_enable_endwise_rules = 0
   " }}}
   
   " {{{ Neomake :help neomake.txt
