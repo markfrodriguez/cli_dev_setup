@@ -4,10 +4,45 @@ Ultimate goal is the setup of a productive command line based development enviro
 
 My setup happens to be on an AWS E2 instance, but should work with any Debian / Ubuntu based Linux distribution.
 
+## Keeping Linux Up-to-Date
+
+Run the following commands individually.
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+```
+
+or run the single command below
+
+```
+sudo apt-get update && time sudo apt-get dist-upgrade
+```
+
+## General Linux Utilities
+
+```
+sudo apt-get install htop
+sudo apt-get install tmux
+sudo apt install curl
+```
+
 ## tmux
 If not already installed, run `sudo apt-get install tmux`. The configuration file resides in the root of the user's home directory. For me, that's `/home/macrod/.tmux.conf`.
 
 When playing with the `.tmux.conf` file, either detach from and then reattach to tmux or run `tmux source-file ~/.tmux.conf`.
+
+## Core Development Tools
+
+The following packages are desirable for a sane development box.
+
+```
+sudo apt-get install git
+sudo apt-get install build-essential
+sudo apt-get install manpages-dev man-db manpages-posix-dev
+sudo apt-get install libncurses-dev
+```
 
 ## nvim
 A version > 0.3.x of Neovim is required for this setup (a requirement of Deoplete plugin). If an older version of neovim is already installed, remove it with the following commands:
@@ -34,7 +69,7 @@ alias vim='nvim'
 alias vimdiff='nvim -d'
 ```
 
-*My preference is for any custom aliases to be in `~/.bash_aliases`, but they could also go in `~/.bashrc` if that's your preference.*
+*My preference is for any custom aliases to be in `~/.bash_aliases`, but they could also go in `~/.bashrc` if that's your thing.*
 
 Some basic commands to manage plugins:
 
@@ -45,7 +80,7 @@ Some basic commands to manage plugins:
 * Upgrade vim-plug itself: `:PlugUpgrade`
 
 ## Plugins
-The setup involves several plugins to produce the best Rust development environment possible so [vim-plug](https://github.com/junegunn/vim-plug) is employed to handle and manage them. To install vim-plug, run the following command:
+The setup involves several plugins to produce the best Rust development environment possible so [vim-plug](https://github.com/junegunn/vim-plug) is employed to handle and manage them. To install vim-plug, run the following commands:
 
 ```
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
