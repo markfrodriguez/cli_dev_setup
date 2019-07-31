@@ -25,6 +25,7 @@ sudo apt-get update && time sudo apt-get dist-upgrade
 ```
 sudo apt-get install htop
 sudo apt-get install tmux
+sudo apt-get install dconf-cli
 sudo apt install curl
 ```
 
